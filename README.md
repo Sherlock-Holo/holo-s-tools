@@ -1,2 +1,2 @@
-# holo-s-tools
+# holo-tools
 holo's tools
