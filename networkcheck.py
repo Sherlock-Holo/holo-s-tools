@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
+import dbus
 import requests
-import sys
-
+from time import sleep
 
 
 def ping(addr):
@@ -14,10 +14,36 @@ def ping(addr):
         return False
 
 
-if __name__ == '__main__':
-    rs = ping('https://www.baidu.com')
-    if rs:
-        print('OK')
-
+def service(name, handle='restart'):
+    if '.service' in name:
+        servicename = name
     else:
-        print('False')
+        servicename = name + '.service'
+
+    sysbus = dbus.SystemBus()
+    systemd1 = sysbus.get_object('org.freedesktop.systemd1', '/org/freedesktop/systemd1')
+    manager = dbus.Interface(systemd1, 'org.freedesktop.systemd1.Manager')
+
+    if handle == 'restart':
+        job = manager.RestartUnit(servicename, 'fail')
+        print('service is restarting...')
+
+    elif handle == 'stop':
+        job = manager.StopUnit(servicename, 'fail')
+        print('service is stopping...')
+
+    elif handle == 'start':
+        job = manager.StartUnit(servicename, 'fail')
+        print('service is starting...')
+
+
+if __name__ == '__main__':
+    while 1:
+        rs = ping('https://www.google.com')
+        
+        if rs:
+            pass
+        else:
+            service('network', 'restart')
+
+        sleep(60)
