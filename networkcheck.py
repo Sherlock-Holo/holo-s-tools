@@ -2,6 +2,7 @@
 
 import dbus
 import requests
+from systemd import journal
 from time import sleep
 
 
@@ -26,21 +27,21 @@ def service(name, handle='restart'):
 
     if handle == 'restart':
         job = manager.RestartUnit(servicename, 'fail')
-        print('service is restarting...')
+        journal.send('service is restarting...')
 
     elif handle == 'stop':
         job = manager.StopUnit(servicename, 'fail')
-        print('service is stopping...')
+        journal.send('service is stopping...')
 
     elif handle == 'start':
         job = manager.StartUnit(servicename, 'fail')
-        print('service is starting...')
+        journal.send('service is starting...')
 
 
 if __name__ == '__main__':
     while 1:
         rs = ping('https://www.google.com')
-        
+
         if rs:
             pass
         else:
